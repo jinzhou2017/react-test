@@ -1,6 +1,6 @@
 import React from 'react';
 import NewsHeader from './newsHeader';
-import '../css/index.css';
+import '../css/react_news.css'
 export default class App extends React.Component{
 
   render(){
