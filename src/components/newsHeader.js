@@ -1,4 +1,6 @@
 import React from 'react';
+import axios from 'axios';
+import {Link} from 'react-router';
 import {
   Row,
   Col,
@@ -8,7 +10,8 @@ import {
   Modal,
   Tabs,
   Form,
-  Input
+  Input,
+  message
 } from 'antd';
 import logo from '../image/logo.png';
 
@@ -20,6 +23,12 @@ class Header extends React.Component{
     current:'top',
     username:'',
     visible:false
+  }
+  componentDidMount(){
+    if(localStorage){
+      let username = localStorage.getItem('username');
+      this.setState({username});
+    }
   }
   handleItem=(ev)=>{
     this.setState({
@@ -35,20 +44,73 @@ class Header extends React.Component{
     this.setState({
       visible: false,
     });
-  }
+  };
   handleCancel = (e) => {
     this.setState({
       visible: false,
     });
-  }
+  };
+  //注册、登录
+  check=(isLogin)=>{
+    let getv = this.props.form.getFieldsValue();
+    if(isLogin){
+      const {username, password} = getv;
+      let url = `http://newsapi.gugujiankong.com/Handler.ashx?action=login&username=${username}&password=${password}`;
+      axios.get(url)
+        .then(res=>{
+          if(res.data === null ){
+            message.error('用户名或密码错误！')
+          }else {
+            this.setState({
+              username: res.data.NickUserName
+            })
+            localStorage.setItem('username', res.data.NickUserName);
+            localStorage.setItem('userId', res.data.UserId);
+            this.props.form.resetFields();
+          }
+
+        })
+
+
+    }else {
+      const {r_username, r_password, r_d_password} = getv;
+      let url = `http://newsapi.gugujiankong.com/Handler.ashx?action=register&r_userName=${r_username}&r_password=${r_password}&r_confirmPassword=${r_d_password}`;
+      axios.get(url)
+        .then(res=>{
+
+          if(res){
+            message.success('注册成功！');
+            this.props.form.resetFields();
+          }
+
+
+        })
+
+
+
+    }
+
+    this.setState({
+      visible:false
+    });
+
+
+  };
+  logout=()=>{
+    this.setState({
+      username:''
+    });
+    localStorage.removeItem('username');
+    localStorage.removeItem('userId');
+  };
 
   render(){
 
       let isUsername = this.state.username?(
         <MenuItem key="register" className="header-r">&nbsp;
           <Button type='primary'>{this.state.username} </Button>&nbsp;
-          <Button type='dashed'>个人中心</Button>&nbsp;
-          <Button >退出</Button>
+          <Link to="/center" style={{display:'inline-block'}}><Button type='dashed'>个人中心</Button></Link>&nbsp;
+          <Button onClick={this.logout}>退出</Button>
         </MenuItem>
       ):(
         <MenuItem key="register" className="header-r" >
@@ -136,7 +198,7 @@ class Header extends React.Component{
                   )}
                 </FormItem>
                 <FormItem >
-                  <Button type="primary" onClick={this.check}>
+                  <Button type="primary" htmlType="submit" onClick={this.check.bind(this, true)}>
                     登录
                   </Button>
                 </FormItem>
@@ -145,22 +207,22 @@ class Header extends React.Component{
             <TabPane tab="注册" key="2">
               <div>
                 <FormItem  label="用户名">
-                  {getFieldDecorator('r-username')(
+                  {getFieldDecorator('r_username')(
                     <Input placeholder="请输入用户名" />
                   )}
                 </FormItem>
                 <FormItem  label="密码">
-                  {getFieldDecorator('r-password')(
+                  {getFieldDecorator('r_password')(
                     <Input type='password' placeholder="请输入密码" />
                   )}
                 </FormItem>
                 <FormItem  label="确认密码">
-                  {getFieldDecorator('r-password')(
+                  {getFieldDecorator('r_d_password')(
                     <Input type='password' placeholder="请输入确认密码" />
                   )}
                 </FormItem>
                 <FormItem >
-                  <Button type="primary" onClick={this.check}>
+                  <Button type="primary" htmlType="submit" onClick={this.check.bind(this, false)}>
                     注册
                   </Button>
                 </FormItem>

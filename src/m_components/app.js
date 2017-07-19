@@ -1,8 +1,11 @@
 import React from 'react';
 import NewsHeader from './newsHeader';
 import NewsFoot from './newsFoot';
-import '../css/react_news.css'
-export default class App extends React.Component{
+import '../css/mobile_css.css';
+
+export default class App_mobile extends React.Component{
+
+
 
   render(){
 
@@ -12,17 +15,8 @@ export default class App extends React.Component{
         {this.props.children}
 
         <NewsFoot/>
-      </div>
-
-
-
-    )
-
-
-
-
+      </div>)
   }
-
 
 
 
