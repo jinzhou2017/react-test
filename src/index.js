@@ -26,8 +26,8 @@ render(
       <Router history={hashHistory}>
         <Route path="/" component={App_mobile}>
           <IndexRoute component={Container_mobile}></IndexRoute>
-          <Route path='/detail/:uniquekey' component={Detail_mobile}/>
-          <Route path='/center' component={Center_mobile}/>
+          <Route path='/mdetail/:uniquekey' component={Detail_mobile}/>
+          <Route path='/mcenter' component={Center_mobile}/>
         </Route>
       </Router>
 
